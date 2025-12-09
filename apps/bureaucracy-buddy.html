@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bureaucracy Buddy - KI-gestützte Hilfe bei Anträgen für Pflegeleistungen">
+    <title>Bureaucracy Buddy | Nexus Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/app.css">
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <header class="header" role="banner">
+        <div class="container header__inner">
+            <a href="../index.html" class="logo" aria-label="Nexus Social - Startseite">
+                <svg class="logo__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="16" r="4" fill="var(--color-health)" />
+                    <circle cx="28" cy="16" r="4" fill="var(--color-education)" />
+                    <circle cx="20" cy="28" r="4" fill="var(--color-sustainability)" />
+                </svg>
+                <span class="logo__text">Nexus Social</span>
+            </a>
+            <nav class="nav" role="navigation">
+                <ul class="nav__list">
+                    <li><a href="../index.html#apps" class="nav__link">Anwendungen</a></li>
+                    <li><a href="../index.html#impact" class="nav__link">Impact</a></li>
+                    <li><a href="../index.html#community" class="nav__link">Community</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- App Header -->
+        <section class="app-hero app-hero--health">
+            <div class="container">
+                <div class="app-hero__breadcrumb">
+                    <a href="../index.html">Startseite</a>
+                    <span>/</span>
+                    <a href="../index.html#apps">Anwendungen</a>
+                    <span>/</span>
+                    <span>Bureaucracy Buddy</span>
+                </div>
+
+                <div class="app-hero__content">
+                    <div class="app-hero__icon">
+                        <svg width="80" height="80" viewBox="0 0 48 48" fill="none">
+                            <rect width="48" height="48" rx="12" fill="currentColor" fill-opacity="0.1" />
+                            <path d="M24 14C20 14 17 17 17 21C17 28 24 34 24 34C24 34 31 28 31 21C31 17 28 14 24 14Z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="24" cy="21" r="3" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="app-hero__info">
+                        <span class="app-hero__category">Gesundheit</span>
+                        <h1 class="app-hero__title">Bureaucracy Buddy</h1>
+                        <p class="app-hero__subtitle">KI-gestützte Hilfe bei Anträgen für Pflegeleistungen</p>
+                        <div class="app-hero__meta">
+                            <div class="app-hero__impact">
+                                <span class="impact-icon">✨</span>
+                                <strong>5.000+</strong> Pflegende unterstützt
+                            </div>
+                            <div class="app-hero__tags">
+                                <span class="tag tag--free">Kostenlos</span>
+                                <span class="tag tag--accessible">Barrierefrei</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- App Tool -->
+        <section class="app-tool">
+            <div class="container">
+                <div class="app-tool__grid">
+                    <!-- Main Tool Area -->
+                    <div class="app-tool__main">
+                        <div class="tool-card">
+                            <h2 class="tool-card__title">Antragshelfer</h2>
+                            <p class="tool-card__description">
+                                Wähle den Antrag aus, bei dem du Hilfe benötigst, und wir führen dich Schritt für
+                                Schritt durch den Prozess.
+                            </p>
+
+                            <form class="antrag-form" id="antragForm">
+                                <div class="form-group">
+                                    <label for="antragstyp" class="form-label">Welchen Antrag möchtest du
+                                        stellen?</label>
+                                    <select id="antragstyp" class="form-select" required>
+                                        <option value="">Bitte wählen...</option>
+                                        <option value="pflegegrad">Pflegegrad beantragen</option>
+                                        <option value="hoeherst">Höherstufung Pflegegrad</option>
+                                        <option value="verhinderung">Verhinderungspflege</option>
+                                        <option value="kurzzeitpflege">Kurzzeitpflege</option>
+                                        <option value="hilfsmittel">Hilfsmittel beantragen</option>
+                                        <option value="wohnraumanpassung">Wohnraumanpassung</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="step2" style="display: none;">
+                                    <label for="pflegesituation" class="form-label">Beschreibe kurz die
+                                        Pflegesituation</label>
+                                    <textarea id="pflegesituation" class="form-textarea" rows="4"
+                                        placeholder="z.B. Meine Mutter (78) benötigt Hilfe beim Anziehen, Waschen und bei den Mahlzeiten..."></textarea>
+                                </div>
+
+                                <div class="form-group" id="step3" style="display: none;">
+                                    <label class="form-label">Bestehende Einschränkungen</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="einschraenkung" value="mobilitaet">
+                                            <span class="checkbox-label">Mobilität eingeschränkt</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="einschraenkung" value="kognitiv">
+                                            <span class="checkbox-label">Kognitive Einschränkungen</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="einschraenkung" value="selbstversorgung">
+                                            <span class="checkbox-label">Selbstversorgung beeinträchtigt</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="einschraenkung" value="alltag">
+                                            <span class="checkbox-label">Alltagsbewältigung erschwert</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" name="einschraenkung" value="sozial">
+                                            <span class="checkbox-label">Soziale Kontakte eingeschränkt</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn--secondary" id="prevBtn"
+                                        style="display: none;">
+                                        ← Zurück
+                                    </button>
+                                    <button type="button" class="btn btn--primary" id="nextBtn">
+                                        Weiter →
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Result Area -->
+                            <div class="result-area" id="resultArea" style="display: none;">
+                                <div class="result-header">
+                                    <span class="result-icon">📋</span>
+                                    <h3>Deine personalisierte Anleitung</h3>
+                                </div>
+                                <div class="result-content" id="resultContent">
+                                    <!-- Generated content appears here -->
+                                </div>
+                                <div class="result-actions">
+                                    <button class="btn btn--primary" onclick="window.print()">
+                                        🖨️ Drucken
+                                    </button>
+                                    <button class="btn btn--secondary" onclick="resetForm()">
+                                        🔄 Neuer Antrag
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <aside class="app-tool__sidebar">
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">💡 Tipps</h3>
+                            <ul class="sidebar-card__list">
+                                <li>Dokumentiere alle Pflegetätigkeiten in einem Pflegetagebuch</li>
+                                <li>Bereite Arztbriefe und Befunde vor dem MDK-Termin vor</li>
+                                <li>Du hast das Recht, beim MDK-Termin eine Vertrauensperson dabei zu haben</li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-card sidebar-card--highlight">
+                            <h3 class="sidebar-card__title">📞 Hilfe benötigt?</h3>
+                            <p>Unsere Community hilft dir gerne weiter.</p>
+                            <a href="#" class="btn btn--outline btn--small">Zum Forum</a>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">📊 Statistik</h3>
+                            <div class="stat-item">
+                                <span class="stat-value">87%</span>
+                                <span class="stat-label">Erfolgsquote</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">∅ 15 Min</span>
+                                <span class="stat-label">Bearbeitungszeit</span>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2024 Nexus Social. Mit ❤️ für eine bessere Welt.</p>
+                <nav class="footer__legal-links">
+                    <a href="../impressum.html">Impressum</a>
+                    <a href="../datenschutz.html">Datenschutz</a>
+                    <a href="../barrierefreiheit.html">Barrierefreiheit</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Form Logic
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        document.getElementById('antragstyp').addEventListener('change', function () {
+            if (this.value) {
+                document.getElementById('step2').style.display = 'block';
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', function () {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateSteps();
+            } else {
+                generateResult();
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function () {
+            if (currentStep > 1) {
+                currentStep--;
+                updateSteps();
+            }
+        });
+
+        function updateSteps() {
+            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'inline-flex' : 'none';
+            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'Anleitung erstellen ✨' : 'Weiter →';
+
+            if (currentStep >= 2) {
+                document.getElementById('step2').style.display = 'block';
+            }
+            if (currentStep >= 3) {
+                document.getElementById('step3').style.display = 'block';
+            }
+        }
+
+        function generateResult() {
+            const antragstyp = document.getElementById('antragstyp').value;
+            const anleitungen = {
+                'pflegegrad': `
+                    <h4>Pflegegrad beantragen - Schritt für Schritt</h4>
+                    <ol class="result-steps">
+                        <li>
+                            <strong>Antrag bei der Pflegekasse stellen</strong>
+                            <p>Rufe deine Pflegekasse an oder schreibe einen formlosen Antrag. Die Pflegekasse ist bei deiner Krankenkasse angesiedelt.</p>
+                        </li>
+                        <li>
+                            <strong>Formulare ausfüllen</strong>
+                            <p>Die Pflegekasse schickt dir Formulare zu. Fülle diese sorgfältig aus und beschreibe detailliert alle Einschränkungen.</p>
+                        </li>
+                        <li>
+                            <strong>MDK-Begutachtung vorbereiten</strong>
+                            <p>Führe ein Pflegetagebuch, sammle Arztbriefe und bereite eine Liste aller benötigten Hilfen vor.</p>
+                        </li>
+                        <li>
+                            <strong>Begutachtungstermin</strong>
+                            <p>Ein Gutachter vom MDK kommt zu dir nach Hause. Zeige alle Einschränkungen ehrlich – verschweige nichts!</p>
+                        </li>
+                        <li>
+                            <strong>Bescheid prüfen</strong>
+                            <p>Innerhalb von 25 Arbeitstagen erhältst du den Bescheid. Bei Ablehnung hast du 4 Wochen Zeit für Widerspruch.</p>
+                        </li>
+                    </ol>
+                    <div class="result-download">
+                        <h5>📥 Hilfreiche Dokumente</h5>
+                        <ul>
+                            <li><a href="#">Muster-Antrag Pflegegrad (PDF)</a></li>
+                            <li><a href="#">Pflegetagebuch-Vorlage (PDF)</a></li>
+                            <li><a href="#">Checkliste MDK-Termin (PDF)</a></li>
+                        </ul>
+                    </div>
+                `,
+                'hoeherst': `
+                    <h4>Höherstufung Pflegegrad - Schritt für Schritt</h4>
+                    <ol class="result-steps">
+                        <li>
+                            <strong>Verschlechterung dokumentieren</strong>
+                            <p>Notiere alle Veränderungen seit der letzten Begutachtung in einem aktualisierten Pflegetagebuch.</p>
+                        </li>
+                        <li>
+                            <strong>Formloser Antrag</strong>
+                            <p>Schreibe an deine Pflegekasse: "Hiermit beantrage ich eine Höherstufung des Pflegegrades aufgrund veränderter Umstände."</p>
+                        </li>
+                        <li>
+                            <strong>Neue Begutachtung</strong>
+                            <p>Der MDK wird erneut eine Begutachtung durchführen. Bereite dich wie beim ersten Mal vor.</p>
+                        </li>
+                    </ol>
+                `,
+                'verhinderung': `
+                    <h4>Verhinderungspflege beantragen</h4>
+                    <ol class="result-steps">
+                        <li>
+                            <strong>Voraussetzungen prüfen</strong>
+                            <p>Du musst mindestens Pflegegrad 2 haben und seit mindestens 6 Monaten zu Hause gepflegt werden.</p>
+                        </li>
+                        <li>
+                            <strong>Budget nutzen</strong>
+                            <p>Dir stehen 1.612 € pro Jahr zu. Bei Kombination mit Kurzzeitpflege sogar bis zu 2.418 €.</p>
+                        </li>
+                        <li>
+                            <strong>Antrag stellen</strong>
+                            <p>Formloser Antrag an die Pflegekasse mit Angabe des Zeitraums und der Ersatzpflegeperson.</p>
+                        </li>
+                    </ol>
+                `
+            };
+
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('resultContent').innerHTML = anleitungen[antragstyp] || '<p>Anleitung wird generiert...</p>';
+            document.getElementById('antragForm').style.display = 'none';
+        }
+
+        function resetForm() {
+            currentStep = 1;
+            document.getElementById('antragForm').reset();
+            document.getElementById('antragForm').style.display = 'block';
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').textContent = 'Weiter →';
+        }
+    </script>
+</body>
+
+</html>

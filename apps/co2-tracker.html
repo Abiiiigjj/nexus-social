@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CO₂-Tracker Pro - Berechne und reduziere deinen ökologischen Fußabdruck">
+    <title>CO₂-Tracker Pro | Nexus Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/app.css">
+    <style>
+        .co2-calculator {
+            display: grid;
+            gap: var(--space-6);
+        }
+
+        .calc-category {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+        }
+
+        .calc-category__header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+
+        .calc-category__icon {
+            font-size: 1.5rem;
+        }
+
+        .calc-category__title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .calc-slider {
+            width: 100%;
+        }
+
+        .slider-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+        }
+
+        .slider-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .slider-value {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-sustainability);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--color-border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--color-sustainability);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .co2-result {
+            background: linear-gradient(135deg, var(--color-sustainability) 0%, var(--color-sustainability-dark) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            text-align: center;
+            color: white;
+        }
+
+        .co2-result__value {
+            font-size: 4rem;
+            font-weight: var(--font-weight-extrabold);
+            line-height: 1;
+            margin-bottom: var(--space-2);
+        }
+
+        .co2-result__unit {
+            font-size: var(--font-size-xl);
+            opacity: 0.9;
+            margin-bottom: var(--space-4);
+        }
+
+        .co2-result__comparison {
+            font-size: var(--font-size-base);
+            opacity: 0.9;
+        }
+
+        .co2-result__bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            margin: var(--space-6) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .co2-result__bar-fill {
+            height: 100%;
+            background: white;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .co2-tips {
+            margin-top: var(--space-6);
+        }
+
+        .co2-tips__title {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-4);
+        }
+
+        .tip-card {
+            display: flex;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-3);
+        }
+
+        .tip-card__icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .tip-card__content h4 {
+            font-size: var(--font-size-base);
+            margin-bottom: var(--space-1);
+        }
+
+        .tip-card__content p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .tip-card__saving {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-sustainability);
+            margin-top: var(--space-2);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <header class="header" role="banner">
+        <div class="container header__inner">
+            <a href="../index.html" class="logo" aria-label="Nexus Social - Startseite">
+                <svg class="logo__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="16" r="4" fill="var(--color-health)" />
+                    <circle cx="28" cy="16" r="4" fill="var(--color-education)" />
+                    <circle cx="20" cy="28" r="4" fill="var(--color-sustainability)" />
+                </svg>
+                <span class="logo__text">Nexus Social</span>
+            </a>
+            <nav class="nav" role="navigation">
+                <ul class="nav__list">
+                    <li><a href="../index.html#apps" class="nav__link">Anwendungen</a></li>
+                    <li><a href="../index.html#impact" class="nav__link">Impact</a></li>
+                    <li><a href="../index.html#community" class="nav__link">Community</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="app-hero app-hero--sustainability">
+            <div class="container">
+                <div class="app-hero__breadcrumb">
+                    <a href="../index.html">Startseite</a>
+                    <span>/</span>
+                    <a href="../index.html#apps">Anwendungen</a>
+                    <span>/</span>
+                    <span>CO₂-Tracker Pro</span>
+                </div>
+
+                <div class="app-hero__content">
+                    <div class="app-hero__icon">
+                        <svg width="80" height="80" viewBox="0 0 40 40" fill="none">
+                            <rect width="40" height="40" rx="10" fill="currentColor" fill-opacity="0.1" />
+                            <path
+                                d="M20 32V20M20 20C20 20 14 18 14 13C14 10 17 8 20 8C23 8 26 10 26 13C26 18 20 20 20 20Z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="app-hero__info">
+                        <span class="app-hero__category"
+                            style="background: var(--color-sustainability);">Nachhaltigkeit</span>
+                        <h1 class="app-hero__title">CO₂-Tracker Pro</h1>
+                        <p class="app-hero__subtitle">Berechne und reduziere deinen ökologischen Fußabdruck</p>
+                        <div class="app-hero__meta">
+                            <div class="app-hero__impact">
+                                <span class="impact-icon">🌍</span>
+                                <strong>12t</strong> CO₂ eingespart durch unsere Community
+                            </div>
+                            <div class="app-hero__tags">
+                                <span class="tag tag--free">Kostenlos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-tool">
+            <div class="container">
+                <div class="app-tool__grid">
+                    <div class="app-tool__main">
+                        <div class="tool-card">
+                            <h2 class="tool-card__title">Dein persönlicher CO₂-Rechner</h2>
+                            <p class="tool-card__description">
+                                Bewege die Regler, um deinen jährlichen CO₂-Fußabdruck zu berechnen.
+                            </p>
+
+                            <div class="co2-calculator">
+                                <!-- Mobilität -->
+                                <div class="calc-category">
+                                    <div class="calc-category__header">
+                                        <span class="calc-category__icon">🚗</span>
+                                        <span class="calc-category__title">Mobilität</span>
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <span class="slider-label">Auto (km/Jahr)</span>
+                                            <span class="slider-value" id="carValue">10.000 km</span>
+                                        </div>
+                                        <input type="range" id="carSlider" min="0" max="30000" value="10000"
+                                            step="1000">
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <span class="slider-label">Flugreisen (Stunden/Jahr)</span>
+                                            <span class="slider-value" id="flightValue">4 Std</span>
+                                        </div>
+                                        <input type="range" id="flightSlider" min="0" max="100" value="4" step="1">
+                                    </div>
+                                </div>
+
+                                <!-- Wohnen -->
+                                <div class="calc-category">
+                                    <div class="calc-category__header">
+                                        <span class="calc-category__icon">🏠</span>
+                                        <span class="calc-category__title">Wohnen & Energie</span>
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <span class="slider-label">Wohnfläche (m²)</span>
+                                            <span class="slider-value" id="homeValue">80 m²</span>
+                                        </div>
+                                        <input type="range" id="homeSlider" min="20" max="200" value="80" step="5">
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <span class="slider-label">Ökostrom-Anteil</span>
+                                            <span class="slider-value" id="ecoValue">50%</span>
+                                        </div>
+                                        <input type="range" id="ecoSlider" min="0" max="100" value="50" step="10">
+                                    </div>
+                                </div>
+
+                                <!-- Ernährung -->
+                                <div class="calc-category">
+                                    <div class="calc-category__header">
+                                        <span class="calc-category__icon">🍽️</span>
+                                        <span class="calc-category__title">Ernährung</span>
+                                    </div>
+
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <span class="slider-label">Fleischkonsum (Mahlzeiten/Woche)</span>
+                                            <span class="slider-value" id="meatValue">5x</span>
+                                        </div>
+                                        <input type="range" id="meatSlider" min="0" max="14" value="5" step="1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ergebnis -->
+                            <div class="co2-result" id="co2Result">
+                                <div class="co2-result__value" id="totalCo2">8.5</div>
+                                <div class="co2-result__unit">Tonnen CO₂ pro Jahr</div>
+                                <div class="co2-result__bar">
+                                    <div class="co2-result__bar-fill" id="resultBar" style="width: 75%;"></div>
+                                </div>
+                                <div class="co2-result__comparison">
+                                    Der deutsche Durchschnitt liegt bei <strong>11,2 Tonnen</strong>.<br>
+                                    Das klimaverträgliche Ziel ist <strong>2 Tonnen</strong>.
+                                </div>
+                            </div>
+
+                            <!-- Tipps -->
+                            <div class="co2-tips">
+                                <h3 class="co2-tips__title">💡 Personalisierte Spartipps</h3>
+
+                                <div class="tip-card" id="tipCar" style="display: none;">
+                                    <span class="tip-card__icon">🚴</span>
+                                    <div class="tip-card__content">
+                                        <h4>Kurzstrecken ohne Auto</h4>
+                                        <p>Fahrten unter 5 km zu Fuß oder mit dem Fahrrad erledigen.</p>
+                                        <div class="tip-card__saving">Spart bis zu 0.5t CO₂/Jahr</div>
+                                    </div>
+                                </div>
+
+                                <div class="tip-card" id="tipFlight" style="display: none;">
+                                    <span class="tip-card__icon">🚆</span>
+                                    <div class="tip-card__content">
+                                        <h4>Zug statt Flug</h4>
+                                        <p>Innereuropäische Reisen mit der Bahn sind bis zu 90% klimafreundlicher.</p>
+                                        <div class="tip-card__saving">Spart bis zu 2t CO₂/Jahr</div>
+                                    </div>
+                                </div>
+
+                                <div class="tip-card" id="tipMeat">
+                                    <span class="tip-card__icon">🥗</span>
+                                    <div class="tip-card__content">
+                                        <h4>Vegetarische Tage</h4>
+                                        <p>Schon 2-3 fleischfreie Tage pro Woche machen einen großen Unterschied.</p>
+                                        <div class="tip-card__saving">Spart bis zu 0.8t CO₂/Jahr</div>
+                                    </div>
+                                </div>
+
+                                <div class="tip-card" id="tipEco" style="display: none;">
+                                    <span class="tip-card__icon">⚡</span>
+                                    <div class="tip-card__content">
+                                        <h4>Wechsel zu 100% Ökostrom</h4>
+                                        <p>Der einfachste Schritt für mehr Klimaschutz mit sofortiger Wirkung.</p>
+                                        <div class="tip-card__saving">Spart bis zu 1.5t CO₂/Jahr</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="app-tool__sidebar">
+                        <div class="sidebar-card sidebar-card--highlight"
+                            style="background: var(--color-sustainability-light); border-color: var(--color-sustainability);">
+                            <h3 class="sidebar-card__title">🌱 Dein Impact</h3>
+                            <div class="stat-item">
+                                <span class="stat-value" id="savedTrees">0</span>
+                                <span class="stat-label">Bäume zum Ausgleich nötig</span>
+                            </div>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">📊 Vergleich</h3>
+                            <ul class="sidebar-card__list">
+                                <li>🇩🇪 Deutschland: 11,2t</li>
+                                <li>🇪🇺 EU-Durchschnitt: 8,4t</li>
+                                <li>🌍 Weltweit: 4,8t</li>
+                                <li>🎯 Klimaziel 2050: 2t</li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">🏆 Challenge</h3>
+                            <p>Reduziere deinen Fußabdruck jeden Monat um 5% und werde Teil der Klimaschützer-Community!
+                            </p>
+                            <a href="#" class="btn btn--outline btn--small"
+                                style="margin-top: var(--space-3);">Challenge starten</a>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2024 Nexus Social. Mit ❤️ für eine bessere Welt.</p>
+                <nav class="footer__legal-links">
+                    <a href="../impressum.html">Impressum</a>
+                    <a href="../datenschutz.html">Datenschutz</a>
+                    <a href="../barrierefreiheit.html">Barrierefreiheit</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // CO2 Calculator Logic
+        const sliders = {
+            car: document.getElementById('carSlider'),
+            flight: document.getElementById('flightSlider'),
+            home: document.getElementById('homeSlider'),
+            eco: document.getElementById('ecoSlider'),
+            meat: document.getElementById('meatSlider')
+        };
+
+        const values = {
+            car: document.getElementById('carValue'),
+            flight: document.getElementById('flightValue'),
+            home: document.getElementById('homeValue'),
+            eco: document.getElementById('ecoValue'),
+            meat: document.getElementById('meatValue')
+        };
+
+        function calculateCO2() {
+            const carKm = parseInt(sliders.car.value);
+            const flightHours = parseInt(sliders.flight.value);
+            const homeSize = parseInt(sliders.home.value);
+            const ecoPercent = parseInt(sliders.eco.value);
+            const meatMeals = parseInt(sliders.meat.value);
+
+            // Simple CO2 calculation (simplified model)
+            const carCO2 = (carKm / 1000) * 0.21; // ~210g/km
+            const flightCO2 = flightHours * 0.25; // ~250kg/hour
+            const homeCO2 = (homeSize / 10) * 0.15 * (1 - ecoPercent / 100);
+            const baseCO2 = 2; // Base lifestyle
+            const meatCO2 = meatMeals * 0.1; // ~100kg/meal per year
+
+            const total = carCO2 + flightCO2 + homeCO2 + baseCO2 + meatCO2;
+
+            // Update display
+            document.getElementById('totalCo2').textContent = total.toFixed(1);
+
+            // Update bar (max 15t = 100%)
+            const barWidth = Math.min((total / 15) * 100, 100);
+            document.getElementById('resultBar').style.width = barWidth + '%';
+
+            // Update trees needed (1 tree = ~22kg CO2/year)
+            const trees = Math.ceil((total * 1000) / 22);
+            document.getElementById('savedTrees').textContent = trees;
+
+            // Show relevant tips
+            document.getElementById('tipCar').style.display = carKm > 5000 ? 'flex' : 'none';
+            document.getElementById('tipFlight').style.display = flightHours > 4 ? 'flex' : 'none';
+            document.getElementById('tipMeat').style.display = meatMeals > 3 ? 'flex' : 'none';
+            document.getElementById('tipEco').style.display = ecoPercent < 100 ? 'flex' : 'none';
+        }
+
+        // Update value displays
+        sliders.car.addEventListener('input', function () {
+            values.car.textContent = this.value.toLocaleString('de-DE') + ' km';
+            calculateCO2();
+        });
+
+        sliders.flight.addEventListener('input', function () {
+            values.flight.textContent = this.value + ' Std';
+            calculateCO2();
+        });
+
+        sliders.home.addEventListener('input', function () {
+            values.home.textContent = this.value + ' m²';
+            calculateCO2();
+        });
+
+        sliders.eco.addEventListener('input', function () {
+            values.eco.textContent = this.value + '%';
+            calculateCO2();
+        });
+
+        sliders.meat.addEventListener('input', function () {
+            values.meat.textContent = this.value + 'x';
+            calculateCO2();
+        });
+
+        // Initial calculation
+        calculateCO2();
+    </script>
+</body>
+
+</html>
