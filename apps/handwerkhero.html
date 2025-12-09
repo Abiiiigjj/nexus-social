@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HandwerkHero - Faire Handwerkervermittlung">
+    <title>HandwerkHero | Nexus Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/enhanced.css">
+    <link rel="stylesheet" href="../styles/app.css">
+    <style>
+        .workers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-5);
+            margin-top: var(--space-6);
+        }
+
+        .worker-card {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-5);
+            transition: all var(--transition-fast);
+        }
+
+        .worker-card:hover {
+            border-color: var(--color-work);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .worker-header {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .worker-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-work), var(--color-work-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .worker-info h3 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-1);
+        }
+
+        .worker-profession {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .worker-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-2);
+        }
+
+        .worker-rating__stars {
+            color: #FFD700;
+        }
+
+        .worker-rating__count {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+        }
+
+        .worker-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+        }
+
+        .worker-badge {
+            font-size: var(--font-size-xs);
+            padding: var(--space-1) var(--space-2);
+            background: var(--color-background);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .worker-badge--verified {
+            background: var(--color-sustainability-light);
+            color: var(--color-sustainability-dark);
+        }
+
+        .worker-badge--fair {
+            background: var(--color-work-light);
+            color: var(--color-work-dark);
+        }
+
+        .worker-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-4);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .worker-price {
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+        }
+
+        .worker-price span {
+            font-size: var(--font-size-sm);
+            font-weight: normal;
+            color: var(--color-text-muted);
+        }
+
+        .request-quote-btn {
+            padding: var(--space-2) var(--space-4);
+            background: var(--color-work);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .request-quote-btn:hover {
+            background: var(--color-work-dark);
+        }
+
+        .category-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+        }
+
+        .category-pill {
+            padding: var(--space-2) var(--space-4);
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .category-pill:hover,
+        .category-pill.active {
+            border-color: var(--color-work);
+            background: var(--color-work-light);
+        }
+
+        .fair-pledge {
+            background: linear-gradient(135deg, var(--color-work-light), var(--color-sustainability-light));
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            text-align: center;
+            margin-top: var(--space-8);
+        }
+
+        .fair-pledge h3 {
+            margin-bottom: var(--space-3);
+        }
+
+        .fair-pledge__features {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-8);
+            margin-top: var(--space-4);
+        }
+
+        .fair-pledge__feature {
+            text-align: center;
+        }
+
+        .fair-pledge__icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-2);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <header class="header" role="banner">
+        <div class="container header__inner">
+            <a href="../index.html" class="logo">
+                <svg class="logo__icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="16" r="4" fill="var(--color-health)" />
+                    <circle cx="28" cy="16" r="4" fill="var(--color-education)" />
+                    <circle cx="20" cy="28" r="4" fill="var(--color-sustainability)" />
+                </svg>
+                <span class="logo__text">Nexus Social</span>
+            </a>
+            <nav class="nav" role="navigation">
+                <ul class="nav__list">
+                    <li><a href="../index.html#apps" class="nav__link">Anwendungen</a></li>
+                    <li><a href="../index.html#impact" class="nav__link">Impact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="app-hero" style="--color-accent: var(--color-work);">
+            <div class="container">
+                <div class="app-hero__breadcrumb">
+                    <a href="../index.html">Startseite</a>
+                    <span>/</span>
+                    <span>HandwerkHero</span>
+                </div>
+
+                <div class="app-hero__content">
+                    <div class="app-hero__icon" style="color: var(--color-work);">
+                        <svg width="80" height="80" viewBox="0 0 40 40" fill="none">
+                            <rect width="40" height="40" rx="10" fill="currentColor" fill-opacity="0.1" />
+                            <path d="M14 28V18L20 14L26 18V28" stroke="currentColor" stroke-width="2" />
+                            <path d="M18 28V22H22V28" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="app-hero__info">
+                        <span class="app-hero__category" style="background: var(--color-work);">Arbeit</span>
+                        <h1 class="app-hero__title">HandwerkHero</h1>
+                        <p class="app-hero__subtitle">Vermittlung von Handwerkern mit Fokus auf faire Arbeitsbedingungen
+                        </p>
+                        <div class="app-hero__meta">
+                            <div class="app-hero__impact">
+                                <span class="impact-icon">🛠️</span>
+                                <strong>450+</strong> verifizierte Handwerker
+                            </div>
+                            <div class="app-hero__tags">
+                                <span class="tag tag--verified">Verifiziert</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-tool">
+            <div class="container">
+                <div class="tool-card">
+                    <h2 class="tool-card__title">🔍 Handwerker finden</h2>
+
+                    <div class="search-bar" style="margin-bottom: var(--space-4);">
+                        <input type="search" class="search-bar__input"
+                            placeholder="Was soll erledigt werden? z.B. Wasserhahn reparieren..." id="jobSearch">
+                    </div>
+
+                    <div class="category-pills">
+                        <button class="category-pill active" onclick="filterWorkers('all', this)">Alle</button>
+                        <button class="category-pill" onclick="filterWorkers('sanitaer', this)">🚿 Sanitär</button>
+                        <button class="category-pill" onclick="filterWorkers('elektro', this)">⚡ Elektro</button>
+                        <button class="category-pill" onclick="filterWorkers('tischler', this)">🪚 Tischlerei</button>
+                        <button class="category-pill" onclick="filterWorkers('maler', this)">🎨 Maler</button>
+                        <button class="category-pill" onclick="filterWorkers('garten', this)">🌱 Garten</button>
+                    </div>
+
+                    <div class="workers-grid" id="workersGrid">
+                        <div class="worker-card" data-category="sanitaer">
+                            <div class="worker-header">
+                                <div class="worker-avatar">MK</div>
+                                <div class="worker-info">
+                                    <h3>Markus Kettner</h3>
+                                    <p class="worker-profession">Sanitär & Heizung</p>
+                                    <div class="worker-rating">
+                                        <span class="worker-rating__stars">★★★★★</span>
+                                        <span class="worker-rating__count">(47 Bewertungen)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worker-badges">
+                                <span class="worker-badge worker-badge--verified">✓ Verifiziert</span>
+                                <span class="worker-badge worker-badge--fair">Fair Pay</span>
+                                <span class="worker-badge">Notdienst</span>
+                            </div>
+                            <div class="worker-footer">
+                                <div class="worker-price">ab 55€ <span>/ Stunde</span></div>
+                                <button class="request-quote-btn" onclick="requestQuote('Markus Kettner')">Angebot
+                                    anfragen</button>
+                            </div>
+                        </div>
+
+                        <div class="worker-card" data-category="elektro">
+                            <div class="worker-header">
+                                <div class="worker-avatar"
+                                    style="background: linear-gradient(135deg, #FFD700, #FFA500);">TS</div>
+                                <div class="worker-info">
+                                    <h3>Thomas Schneider</h3>
+                                    <p class="worker-profession">Elektriker</p>
+                                    <div class="worker-rating">
+                                        <span class="worker-rating__stars">★★★★★</span>
+                                        <span class="worker-rating__count">(32 Bewertungen)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worker-badges">
+                                <span class="worker-badge worker-badge--verified">✓ Verifiziert</span>
+                                <span class="worker-badge worker-badge--fair">Fair Pay</span>
+                            </div>
+                            <div class="worker-footer">
+                                <div class="worker-price">ab 60€ <span>/ Stunde</span></div>
+                                <button class="request-quote-btn" onclick="requestQuote('Thomas Schneider')">Angebot
+                                    anfragen</button>
+                            </div>
+                        </div>
+
+                        <div class="worker-card" data-category="tischler">
+                            <div class="worker-header">
+                                <div class="worker-avatar"
+                                    style="background: linear-gradient(135deg, #8B4513, #A0522D);">LW</div>
+                                <div class="worker-info">
+                                    <h3>Lisa Weber</h3>
+                                    <p class="worker-profession">Tischlerin</p>
+                                    <div class="worker-rating">
+                                        <span class="worker-rating__stars">★★★★☆</span>
+                                        <span class="worker-rating__count">(18 Bewertungen)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worker-badges">
+                                <span class="worker-badge worker-badge--verified">✓ Verifiziert</span>
+                                <span class="worker-badge">Meisterbetrieb</span>
+                            </div>
+                            <div class="worker-footer">
+                                <div class="worker-price">ab 50€ <span>/ Stunde</span></div>
+                                <button class="request-quote-btn" onclick="requestQuote('Lisa Weber')">Angebot
+                                    anfragen</button>
+                            </div>
+                        </div>
+
+                        <div class="worker-card" data-category="maler">
+                            <div class="worker-header">
+                                <div class="worker-avatar"
+                                    style="background: linear-gradient(135deg, #E07A5F, #F4A261);">AB</div>
+                                <div class="worker-info">
+                                    <h3>Anna Becker</h3>
+                                    <p class="worker-profession">Malermeisterin</p>
+                                    <div class="worker-rating">
+                                        <span class="worker-rating__stars">★★★★★</span>
+                                        <span class="worker-rating__count">(56 Bewertungen)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worker-badges">
+                                <span class="worker-badge worker-badge--verified">✓ Verifiziert</span>
+                                <span class="worker-badge worker-badge--fair">Fair Pay</span>
+                                <span class="worker-badge">Öko-Farben</span>
+                            </div>
+                            <div class="worker-footer">
+                                <div class="worker-price">ab 45€ <span>/ Stunde</span></div>
+                                <button class="request-quote-btn" onclick="requestQuote('Anna Becker')">Angebot
+                                    anfragen</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fair-pledge">
+                        <h3>🤝 Das HandwerkHero Versprechen</h3>
+                        <p>Alle Handwerker auf unserer Plattform verpflichten sich zu fairen Arbeitsbedingungen</p>
+                        <div class="fair-pledge__features">
+                            <div class="fair-pledge__feature">
+                                <div class="fair-pledge__icon">💰</div>
+                                <div>Faire Bezahlung</div>
+                            </div>
+                            <div class="fair-pledge__feature">
+                                <div class="fair-pledge__icon">📋</div>
+                                <div>Transparente Preise</div>
+                            </div>
+                            <div class="fair-pledge__feature">
+                                <div class="fair-pledge__icon">🛡️</div>
+                                <div>Versichert</div>
+                            </div>
+                            <div class="fair-pledge__feature">
+                                <div class="fair-pledge__icon">♻️</div>
+                                <div>Nachhaltig</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2024 Nexus Social</p>
+                <nav class="footer__legal-links">
+                    <a href="../impressum.html">Impressum</a>
+                    <a href="../datenschutz.html">Datenschutz</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function filterWorkers(category, btn) {
+            document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.worker-card').forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function requestQuote(name) {
+            alert(`📧 Angebotsanfrage an ${name} gesendet!\n\nDu erhältst in der Regel innerhalb von 24 Stunden eine Antwort.`);
+        }
+    </script>
+    <script src="../scripts/main.js"></script>
+</body>
+
+</html>

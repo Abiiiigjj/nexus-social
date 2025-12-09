@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MediRemind - Intelligente Medikamentenerinnerung">
+    <title>MediRemind | Nexus Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/enhanced.css">
+    <link rel="stylesheet" href="../styles/app.css">
+    <style>
+        .medication-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            margin-top: var(--space-6);
+        }
+
+        .medication-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            gap: var(--space-4);
+            align-items: center;
+            padding: var(--space-4);
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .medication-item:hover {
+            border-color: var(--color-health);
+        }
+
+        .medication-item.taken {
+            opacity: 0.6;
+            background: var(--color-sustainability-light);
+            border-color: var(--color-sustainability);
+        }
+
+        .med-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--color-health-light);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .med-info h4 {
+            font-size: var(--font-size-base);
+            margin-bottom: var(--space-1);
+        }
+
+        .med-info p {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .med-time {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+        }
+
+        .med-check {
+            width: 44px;
+            height: 44px;
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            background: var(--color-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .med-check:hover {
+            border-color: var(--color-sustainability);
+            background: var(--color-sustainability-light);
+        }
+
+        .med-check.checked {
+            background: var(--color-sustainability);
+            border-color: var(--color-sustainability);
+            color: white;
+        }
+
+        .add-medication {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-4);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            background: transparent;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-fast);
+            width: 100%;
+        }
+
+        .add-medication:hover {
+            border-color: var(--color-education);
+            color: var(--color-education);
+        }
+
+        .add-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .add-modal.active {
+            display: flex;
+        }
+
+        .add-modal__content {
+            background: var(--color-surface);
+            padding: var(--space-8);
+            border-radius: var(--radius-xl);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .add-modal__content h3 {
+            margin-bottom: var(--space-6);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        .wechselwirkung-warning {
+            background: #FFF3CD;
+            border: 1px solid #FFCC00;
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            margin-top: var(--space-4);
+            display: none;
+        }
+
+        .wechselwirkung-warning.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .daily-summary {
+            background: linear-gradient(135deg, var(--color-health), var(--color-health-dark));
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            color: white;
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-8);
+            margin-top: var(--space-4);
+        }
+
+        .summary-stat {
+            text-align: center;
+        }
+
+        .summary-stat__value {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .summary-stat__label {
+            font-size: var(--font-size-sm);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <header class="header" role="banner">
+        <div class="container header__inner">
+            <a href="../index.html" class="logo">
+                <svg class="logo__icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="16" r="4" fill="var(--color-health)" />
+                    <circle cx="28" cy="16" r="4" fill="var(--color-education)" />
+                    <circle cx="20" cy="28" r="4" fill="var(--color-sustainability)" />
+                </svg>
+                <span class="logo__text">Nexus Social</span>
+            </a>
+            <nav class="nav" role="navigation">
+                <ul class="nav__list">
+                    <li><a href="../index.html#apps" class="nav__link">Anwendungen</a></li>
+                    <li><a href="../index.html#impact" class="nav__link">Impact</a></li>
+                    <li><a href="../index.html#community" class="nav__link">Community</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="app-hero app-hero--health">
+            <div class="container">
+                <div class="app-hero__breadcrumb">
+                    <a href="../index.html">Startseite</a>
+                    <span>/</span>
+                    <span>MediRemind</span>
+                </div>
+
+                <div class="app-hero__content">
+                    <div class="app-hero__icon">
+                        <svg width="80" height="80" viewBox="0 0 40 40" fill="none">
+                            <rect width="40" height="40" rx="10" fill="currentColor" fill-opacity="0.1" />
+                            <path d="M20 12V28M12 20H28" stroke="currentColor" stroke-width="3"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="app-hero__info">
+                        <span class="app-hero__category">Gesundheit</span>
+                        <h1 class="app-hero__title">MediRemind</h1>
+                        <p class="app-hero__subtitle">Intelligente Medikamentenerinnerung mit Wechselwirkungsprüfung</p>
+                        <div class="app-hero__meta">
+                            <div class="app-hero__impact">
+                                <span class="impact-icon">💊</span>
+                                <strong>8.500+</strong> Nutzer
+                            </div>
+                            <div class="app-hero__tags">
+                                <span class="tag tag--accessible">Barrierefrei</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-tool">
+            <div class="container">
+                <div class="app-tool__grid">
+                    <div class="app-tool__main">
+                        <div class="tool-card">
+                            <div class="daily-summary">
+                                <h3 style="color: white; margin: 0 0 var(--space-2);">Heute, 9. Dezember</h3>
+                                <p style="opacity: 0.9; margin: 0;">Vergiss keine Einnahme!</p>
+                                <div class="summary-stats">
+                                    <div class="summary-stat">
+                                        <div class="summary-stat__value" id="takenCount">2</div>
+                                        <div class="summary-stat__label">Eingenommen</div>
+                                    </div>
+                                    <div class="summary-stat">
+                                        <div class="summary-stat__value" id="pendingCount">2</div>
+                                        <div class="summary-stat__label">Ausstehend</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h2 class="tool-card__title">📋 Deine Medikamente heute</h2>
+
+                            <div class="medication-list" id="medicationList">
+                                <div class="medication-item taken">
+                                    <div class="med-icon">💊</div>
+                                    <div class="med-info">
+                                        <h4>Vitamin D3</h4>
+                                        <p>1000 IE · Mit Frühstück</p>
+                                    </div>
+                                    <div class="med-time">08:00</div>
+                                    <button class="med-check checked" onclick="toggleMed(this)">✓</button>
+                                </div>
+
+                                <div class="medication-item taken">
+                                    <div class="med-icon">💉</div>
+                                    <div class="med-info">
+                                        <h4>Metformin</h4>
+                                        <p>500mg · Nach dem Essen</p>
+                                    </div>
+                                    <div class="med-time">08:30</div>
+                                    <button class="med-check checked" onclick="toggleMed(this)">✓</button>
+                                </div>
+
+                                <div class="medication-item">
+                                    <div class="med-icon">🩹</div>
+                                    <div class="med-info">
+                                        <h4>Ibuprofen</h4>
+                                        <p>400mg · Bei Bedarf</p>
+                                    </div>
+                                    <div class="med-time">14:00</div>
+                                    <button class="med-check" onclick="toggleMed(this)"></button>
+                                </div>
+
+                                <div class="medication-item">
+                                    <div class="med-icon">💊</div>
+                                    <div class="med-info">
+                                        <h4>Magnesium</h4>
+                                        <p>400mg · Abends</p>
+                                    </div>
+                                    <div class="med-time">20:00</div>
+                                    <button class="med-check" onclick="toggleMed(this)"></button>
+                                </div>
+                            </div>
+
+                            <button class="add-medication" onclick="openAddModal()">
+                                <span>+</span> Medikament hinzufügen
+                            </button>
+
+                            <div class="wechselwirkung-warning" id="warningBox">
+                                <strong>⚠️ Mögliche Wechselwirkung!</strong>
+                                <p style="margin: var(--space-2) 0 0; font-size: var(--font-size-sm);">
+                                    Ibuprofen kann die Wirkung von Metformin beeinflussen. Bitte Rücksprache mit deinem
+                                    Arzt halten.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="app-tool__sidebar">
+                        <div class="sidebar-card sidebar-card--highlight"
+                            style="background: var(--color-health-light); border-color: var(--color-health);">
+                            <h3 class="sidebar-card__title">📊 Wochenstatistik</h3>
+                            <div class="stat-item">
+                                <span class="stat-value">92%</span>
+                                <span class="stat-label">Einnahmetreue</span>
+                            </div>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">⏰ Nächste Erinnerung</h3>
+                            <p style="font-size: var(--font-size-2xl); font-weight: bold; margin: var(--space-2) 0;">
+                                14:00</p>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">Ibuprofen
+                                400mg</p>
+                        </div>
+
+                        <div class="sidebar-card">
+                            <h3 class="sidebar-card__title">💡 Tipps</h3>
+                            <ul class="sidebar-card__list">
+                                <li>Nimm Medikamente immer zur gleichen Zeit</li>
+                                <li>Bewahre sie an einem festen Ort auf</li>
+                                <li>Trinke ausreichend Wasser dazu</li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Medication Modal -->
+    <div class="add-modal" id="addModal">
+        <div class="add-modal__content">
+            <h3>💊 Medikament hinzufügen</h3>
+            <form id="addMedForm">
+                <div class="form-group">
+                    <label class="form-label">Medikament</label>
+                    <input type="text" class="form-input" id="medName" placeholder="z.B. Aspirin" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Dosierung</label>
+                        <input type="text" class="form-input" placeholder="z.B. 500mg">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Uhrzeit</label>
+                        <input type="time" class="form-input" value="08:00" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hinweise</label>
+                    <input type="text" class="form-input" placeholder="z.B. Nach dem Essen">
+                </div>
+                <div class="form-actions" style="margin-top: var(--space-6);">
+                    <button type="button" class="btn btn--secondary" onclick="closeAddModal()">Abbrechen</button>
+                    <button type="submit" class="btn btn--primary">Hinzufügen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2024 Nexus Social</p>
+                <nav class="footer__legal-links">
+                    <a href="../impressum.html">Impressum</a>
+                    <a href="../datenschutz.html">Datenschutz</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMed(btn) {
+            const item = btn.closest('.medication-item');
+            btn.classList.toggle('checked');
+            item.classList.toggle('taken');
+            btn.textContent = btn.classList.contains('checked') ? '✓' : '';
+            updateCounts();
+
+            // Show warning if specific combination
+            checkInteractions();
+        }
+
+        function updateCounts() {
+            const items = document.querySelectorAll('.medication-item');
+            const taken = document.querySelectorAll('.medication-item.taken').length;
+            const pending = items.length - taken;
+
+            document.getElementById('takenCount').textContent = taken;
+            document.getElementById('pendingCount').textContent = pending;
+        }
+
+        function checkInteractions() {
+            // Simulated interaction check
+            const warning = document.getElementById('warningBox');
+            const hasIbuprofen = document.querySelector('.med-info h4')?.textContent.includes('Ibuprofen');
+            const hasMetformin = document.querySelector('.medication-item:nth-child(2)');
+
+            if (hasIbuprofen && hasMetformin) {
+                warning.classList.add('show');
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        document.getElementById('addMedForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('medName').value;
+
+            const newItem = document.createElement('div');
+            newItem.className = 'medication-item';
+            newItem.innerHTML = `
+                <div class="med-icon">💊</div>
+                <div class="med-info">
+                    <h4>${name}</h4>
+                    <p>Neu hinzugefügt</p>
+                </div>
+                <div class="med-time">--:--</div>
+                <button class="med-check" onclick="toggleMed(this)"></button>
+            `;
+
+            document.getElementById('medicationList').appendChild(newItem);
+            closeAddModal();
+            this.reset();
+            updateCounts();
+        });
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    </script>
+    <script src="../scripts/main.js"></script>
+</body>
+
+</html>

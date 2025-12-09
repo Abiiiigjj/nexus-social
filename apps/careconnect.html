@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CareConnect - Vernetzung pflegender Angehöriger">
+    <title>CareConnect | Nexus Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/enhanced.css">
+    <link rel="stylesheet" href="../styles/app.css">
+    <style>
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-5);
+            margin-top: var(--space-6);
+        }
+
+        .topic-card {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-5);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .topic-card:hover {
+            border-color: var(--color-health);
+            transform: translateY(-4px);
+        }
+
+        .topic-card__header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .topic-card__icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: var(--color-health-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .topic-card__title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .topic-card__members {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .topic-card__preview {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .topic-card__footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--space-4);
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--color-border);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+        }
+
+        .support-section {
+            background: linear-gradient(135deg, var(--color-health-light), #fff5f3);
+            border-radius: var(--radius-xl);
+            padding: var(--space-8);
+            text-align: center;
+            margin-top: var(--space-8);
+        }
+
+        .support-section h3 {
+            margin-bottom: var(--space-3);
+        }
+
+        .support-buttons {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+            margin-top: var(--space-6);
+        }
+
+        .support-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-4) var(--space-6);
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .support-btn:hover {
+            border-color: var(--color-health);
+            background: var(--color-health-light);
+        }
+
+        .support-btn__icon {
+            font-size: 1.5rem;
+        }
+
+        .chat-widget {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-6);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--color-health);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-xl);
+            z-index: 100;
+            transition: all var(--transition-fast);
+        }
+
+        .chat-widget:hover {
+            transform: scale(1.1);
+        }
+
+        .event-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-6);
+        }
+
+        .event-card {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+        }
+
+        .event-card__date {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-2) var(--space-3);
+            background: var(--color-health);
+            color: white;
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-3);
+        }
+
+        .event-card__day {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            line-height: 1;
+        }
+
+        .event-card__month {
+            font-size: var(--font-size-xs);
+            text-transform: uppercase;
+        }
+
+        .event-card__title {
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-1);
+        }
+
+        .event-card__info {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .selfcare-tips {
+            background: var(--color-background);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-top: var(--space-6);
+        }
+
+        .tip-item {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .tip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tip-icon {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <header class="header" role="banner">
+        <div class="container header__inner">
+            <a href="../index.html" class="logo">
+                <svg class="logo__icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="16" r="4" fill="var(--color-health)" />
+                    <circle cx="28" cy="16" r="4" fill="var(--color-education)" />
+                    <circle cx="20" cy="28" r="4" fill="var(--color-sustainability)" />
+                </svg>
+                <span class="logo__text">Nexus Social</span>
+            </a>
+            <nav class="nav" role="navigation">
+                <ul class="nav__list">
+                    <li><a href="../index.html#apps" class="nav__link">Anwendungen</a></li>
+                    <li><a href="../index.html#impact" class="nav__link">Impact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="app-hero app-hero--health">
+            <div class="container">
+                <div class="app-hero__breadcrumb">
+                    <a href="../index.html">Startseite</a>
+                    <span>/</span>
+                    <span>CareConnect</span>
+                </div>
+
+                <div class="app-hero__content">
+                    <div class="app-hero__icon">
+                        <svg width="80" height="80" viewBox="0 0 40 40" fill="none">
+                            <rect width="40" height="40" rx="10" fill="currentColor" fill-opacity="0.1" />
+                            <path d="M14 20C14 20 17 16 20 16C23 16 26 20 26 20C26 20 23 24 20 24C17 24 14 20 14 20Z"
+                                stroke="currentColor" stroke-width="2" />
+                            <circle cx="20" cy="20" r="2" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <div class="app-hero__info">
+                        <span class="app-hero__category">Gesundheit</span>
+                        <h1 class="app-hero__title">CareConnect</h1>
+                        <p class="app-hero__subtitle">Vernetzung von pflegenden Angehörigen für gegenseitige
+                            Unterstützung</p>
+                        <div class="app-hero__meta">
+                            <div class="app-hero__impact">
+                                <span class="impact-icon">💝</span>
+                                <strong>1.800+</strong> Pflegende vernetzt
+                            </div>
+                            <div class="app-hero__tags">
+                                <span class="tag tag--free">Kostenlos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-tool">
+            <div class="container">
+                <div class="tool-card">
+                    <h2 class="tool-card__title">💬 Community-Themen</h2>
+                    <p class="tool-card__description">
+                        Tausche dich mit anderen pflegenden Angehörigen aus. Du bist nicht allein!
+                    </p>
+
+                    <div class="community-grid">
+                        <div class="topic-card" onclick="openTopic('demenz')">
+                            <div class="topic-card__header">
+                                <div class="topic-card__icon">🧠</div>
+                                <div>
+                                    <h3 class="topic-card__title">Demenz-Begleitung</h3>
+                                    <span class="topic-card__members">324 Mitglieder</span>
+                                </div>
+                            </div>
+                            <p class="topic-card__preview">
+                                Austausch über den Umgang mit Demenz, Tipps für den Alltag und emotionale Unterstützung
+                            </p>
+                            <div class="topic-card__footer">
+                                <span>12 neue Beiträge heute</span>
+                                <span>Aktiv</span>
+                            </div>
+                        </div>
+
+                        <div class="topic-card" onclick="openTopic('entlastung')">
+                            <div class="topic-card__header">
+                                <div class="topic-card__icon">🧘</div>
+                                <div>
+                                    <h3 class="topic-card__title">Selbstfürsorge</h3>
+                                    <span class="topic-card__members">567 Mitglieder</span>
+                                </div>
+                            </div>
+                            <p class="topic-card__preview">
+                                Wie man auf sich selbst achtet, während man andere pflegt. Burnout-Prävention
+                            </p>
+                            <div class="topic-card__footer">
+                                <span>8 neue Beiträge heute</span>
+                                <span>Aktiv</span>
+                            </div>
+                        </div>
+
+                        <div class="topic-card" onclick="openTopic('rechtliches')">
+                            <div class="topic-card__header">
+                                <div class="topic-card__icon">⚖️</div>
+                                <div>
+                                    <h3 class="topic-card__title">Recht & Finanzen</h3>
+                                    <span class="topic-card__members">412 Mitglieder</span>
+                                </div>
+                            </div>
+                            <p class="topic-card__preview">
+                                Pflegegeld, Verhinderungspflege, rechtliche Fragen und Antragsstellung
+                            </p>
+                            <div class="topic-card__footer">
+                                <span>5 neue Beiträge heute</span>
+                                <span>Aktiv</span>
+                            </div>
+                        </div>
+
+                        <div class="topic-card" onclick="openTopic('hilfe')">
+                            <div class="topic-card__header">
+                                <div class="topic-card__icon">🤝</div>
+                                <div>
+                                    <h3 class="topic-card__title">Nachbarschaftshilfe</h3>
+                                    <span class="topic-card__members">189 Mitglieder</span>
+                                </div>
+                            </div>
+                            <p class="topic-card__preview">
+                                Pflegende in deiner Nähe finden, gegenseitige Unterstützung organisieren
+                            </p>
+                            <div class="topic-card__footer">
+                                <span>3 neue Beiträge heute</span>
+                                <span>Aktiv</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="selfcare-tips">
+                        <h3>🌸 Heute für dich</h3>
+                        <div class="tip-item">
+                            <span class="tip-icon">💨</span>
+                            <div>
+                                <strong>Atempause (5 Min)</strong>
+                                <p
+                                    style="margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                    Nimm dir 5 Minuten für bewusstes Atmen. Du hast es verdient.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-icon">☀️</span>
+                            <div>
+                                <strong>Sonnenlicht tanken</strong>
+                                <p
+                                    style="margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                    Geh kurz nach draußen – schon 10 Minuten Tageslicht helfen.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-icon">📞</span>
+                            <div>
+                                <strong>Ruf jemanden an</strong>
+                                <p
+                                    style="margin: 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                    Ein kurzes Gespräch mit Freunden kann Wunder wirken.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: var(--space-8);">📅 Kommende Events</h3>
+                    <div class="event-cards">
+                        <div class="event-card">
+                            <div class="event-card__date">
+                                <span class="event-card__day">15</span>
+                                <span class="event-card__month">Dez</span>
+                            </div>
+                            <h4 class="event-card__title">Online-Gesprächskreis</h4>
+                            <p class="event-card__info">19:00 Uhr · Zoom · Kostenlos</p>
+                        </div>
+                        <div class="event-card">
+                            <div class="event-card__date">
+                                <span class="event-card__day">18</span>
+                                <span class="event-card__month">Dez</span>
+                            </div>
+                            <h4 class="event-card__title">Workshop: Stressabbau</h4>
+                            <p class="event-card__info">15:00 Uhr · Online · 12 Plätze frei</p>
+                        </div>
+                        <div class="event-card">
+                            <div class="event-card__date">
+                                <span class="event-card__day">22</span>
+                                <span class="event-card__month">Dez</span>
+                            </div>
+                            <h4 class="event-card__title">Weihnachts-Café</h4>
+                            <p class="event-card__info">16:00 Uhr · Kassel · Präsenz</p>
+                        </div>
+                    </div>
+
+                    <div class="support-section">
+                        <h3>🆘 Soforthilfe</h3>
+                        <p>In akuten Krisen sind wir für dich da. Du musst das nicht alleine schaffen.</p>
+                        <div class="support-buttons">
+                            <button class="support-btn"
+                                onclick="alert('Telefon-Seelsorge: 0800 111 0 111 (kostenlos, 24h)')">
+                                <span class="support-btn__icon">📞</span>
+                                <span>Telefonseelsorge</span>
+                            </button>
+                            <button class="support-btn" onclick="openChat()">
+                                <span class="support-btn__icon">💬</span>
+                                <span>Live-Chat</span>
+                            </button>
+                            <button class="support-btn" onclick="alert('Pflegetelefon: 030 2017 9131')">
+                                <span class="support-btn__icon">❤️</span>
+                                <span>Pflegetelefon</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button class="chat-widget" onclick="openChat()" title="Chat starten">💬</button>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2024 Nexus Social</p>
+                <nav class="footer__legal-links">
+                    <a href="../impressum.html">Impressum</a>
+                    <a href="../datenschutz.html">Datenschutz</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function openTopic(topic) {
+            const topics = {
+                'demenz': 'Demenz-Begleitung',
+                'entlastung': 'Selbstfürsorge',
+                'rechtliches': 'Recht & Finanzen',
+                'hilfe': 'Nachbarschaftshilfe'
+            };
+            alert(`📝 Du betrittst das Forum: ${topics[topic]}\n\nHier kannst du Fragen stellen und dich mit anderen austauschen.`);
+        }
+
+        function openChat() {
+            alert('💬 Live-Chat\n\nUnser Chat wird bald verfügbar sein.\n\nIn der Zwischenzeit:\n📞 Telefonseelsorge: 0800 111 0 111\n📞 Pflegetelefon: 030 2017 9131');
+        }
+    </script>
+    <script src="../scripts/main.js"></script>
+</body>
+
+</html>

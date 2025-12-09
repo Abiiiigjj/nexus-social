@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SignLink - Echtzeit-Gebärdensprachübersetzung">
+    <title>SignLink | Nexus Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/enhanced.css">
+    <link rel="stylesheet" href="../styles/app.css">
+    <style>
+        .translation-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-6);
+            margin-top: var(--space-6);
+        }
+
+        @media (max-width: 767px) {
+            .translation-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-panel,
+        .output-panel {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-5);
+            min-height: 300px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .panel-title {
+            font-weight: var(--font-weight-semibold);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .language-select {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: var(--color-background);
+            font-size: var(--font-size-sm);
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 200px;
+            border: none;
+            background: transparent;
+            font-size: var(--font-size-lg);
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        .sign-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            justify-content: center;
+            padding: var(--space-4);
+        }
+
+        .sign-card {
+            width: 80px;
+            height: 100px;
+            background: var(--color-background);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInUp 0.3s ease;
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+
+        .sign-card:hover {
+            transform: scale(1.1);
+        }
+
+        .sign-card__emoji {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-1);
+        }
+
+        .sign-card__letter {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-secondary);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .swap-btn {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--color-education);
+            color: white;
+            border: 3px solid var(--color-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 10;
+            transition: all var(--transition-fast);
+        }
+
+        .swap-btn:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .translation-wrapper {
+            position: relative;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+        }
+
+        @media (max-width: 767px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: var(--space-6);
+            background: var(--color-background);
+            border-radius: var(--radius-lg);
+        }
+
+        .feature-card__icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-3);
+        }
+
+        .feature-card__title {
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-2);
+        }
+
+        .feature-card__desc {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .camera-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .camera-placeholder:hover {
+            border-color: var(--color-education);
+            background: var(--color-education-light);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <header class="header" role="banner">
+        <div class="container header__inner">
+            <a href="../index.html" class="logo">
+                <svg class="logo__icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="16" r="4" fill="var(--color-health)" />
+                    <circle cx="28" cy="16" r="4" fill="var(--color-education)" />
+                    <circle cx="20" cy="28" r="4" fill="var(--color-sustainability)" />
+                </svg>
+                <span class="logo__text">Nexus Social</span>
+            </a>
+            <nav class="nav" role="navigation">
+                <ul class="nav__list">
+                    <li><a href="../index.html#apps" class="nav__link">Anwendungen</a></li>
+                    <li><a href="../index.html#impact" class="nav__link">Impact</a></li>
+                    <li><a href="../index.html#community" class="nav__link">Community</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="app-hero app-hero--education">
+            <div class="container">
+                <div class="app-hero__breadcrumb">
+                    <a href="../index.html">Startseite</a>
+                    <span>/</span>
+                    <span>SignLink</span>
+                </div>
+
+                <div class="app-hero__content">
+                    <div class="app-hero__icon" style="color: var(--color-education);">
+                        <svg width="80" height="80" viewBox="0 0 40 40" fill="none">
+                            <rect width="40" height="40" rx="10" fill="currentColor" fill-opacity="0.1" />
+                            <rect x="10" y="14" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+                            <path d="M14 10V14M26 10V14M14 32V28M26 32V28" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="app-hero__info">
+                        <span class="app-hero__category" style="background: var(--color-education);">Bildung</span>
+                        <h1 class="app-hero__title">SignLink</h1>
+                        <p class="app-hero__subtitle">Echtzeit-Gebärdensprachübersetzung für inklusive Kommunikation</p>
+                        <div class="app-hero__meta">
+                            <div class="app-hero__impact">
+                                <span class="impact-icon">🤟</span>
+                                <strong>1.200+</strong> barrierefreie Meetings
+                            </div>
+                            <div class="app-hero__tags">
+                                <span class="tag tag--free">Kostenlos</span>
+                                <span class="tag tag--accessible">Barrierefrei</span>
+                                <span class="tag tag--new">Neu</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-tool">
+            <div class="container">
+                <div class="tool-card">
+                    <h2 class="tool-card__title">🤟 Text zu Gebärdensprache</h2>
+                    <p class="tool-card__description">
+                        Gib einen Text ein und sieh die Übersetzung in Gebärdensprache. Klick auf die Zeichen für
+                        Details.
+                    </p>
+
+                    <div class="translation-wrapper">
+                        <div class="translation-area">
+                            <div class="input-panel">
+                                <div class="panel-header">
+                                    <span class="panel-title">📝 Text</span>
+                                    <select class="language-select">
+                                        <option>Deutsch</option>
+                                        <option>English</option>
+                                    </select>
+                                </div>
+                                <textarea class="text-input" id="textInput" placeholder="Schreibe hier deinen Text..."
+                                    oninput="translateToSign()">Hallo Welt</textarea>
+                            </div>
+
+                            <div class="output-panel">
+                                <div class="panel-header">
+                                    <span class="panel-title">🤟 DGS (Deutsche Gebärdensprache)</span>
+                                </div>
+                                <div class="sign-display" id="signOutput">
+                                    <!-- Signs will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                        <button class="swap-btn" title="Richtung wechseln">⇄</button>
+                    </div>
+
+                    <div class="camera-placeholder" onclick="startCamera()">
+                        <span style="font-size: 3rem;">📹</span>
+                        <p style="margin-top: var(--space-2); color: var(--color-text-secondary);">
+                            Kamera aktivieren für Live-Erkennung
+                        </p>
+                    </div>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-card__icon">⚡</div>
+                            <div class="feature-card__title">Echtzeit</div>
+                            <div class="feature-card__desc">Übersetzung in unter 100ms</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-card__icon">🎥</div>
+                            <div class="feature-card__title">Video-Meetings</div>
+                            <div class="feature-card__desc">Integration für Zoom, Teams, Meet</div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-card__icon">📱</div>
+                            <div class="feature-card__title">Mobile App</div>
+                            <div class="feature-card__desc">Auch für iOS und Android</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2024 Nexus Social</p>
+                <nav class="footer__legal-links">
+                    <a href="../impressum.html">Impressum</a>
+                    <a href="../datenschutz.html">Datenschutz</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simplified sign language alphabet (DGS approximation)
+        const signAlphabet = {
+            'a': '🤚', 'b': '🖐', 'c': '🤏', 'd': '☝️', 'e': '✊',
+            'f': '🤙', 'g': '👈', 'h': '🤞', 'i': '🤙', 'j': '🤙',
+            'k': '✌️', 'l': '🤟', 'm': '✊', 'n': '✊', 'o': '👌',
+            'p': '👇', 'q': '👇', 'r': '🤞', 's': '✊', 't': '✊',
+            'u': '🤘', 'v': '✌️', 'w': '🤟', 'x': '🤞', 'y': '🤙',
+            'z': '☝️', ' ': '➡️'
+        };
+
+        function translateToSign() {
+            const text = document.getElementById('textInput').value.toLowerCase();
+            const output = document.getElementById('signOutput');
+            output.innerHTML = '';
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const sign = signAlphabet[char] || '❓';
+
+                const card = document.createElement('div');
+                card.className = 'sign-card';
+                card.style.animationDelay = `${i * 0.05}s`;
+                card.innerHTML = `
+                    <span class="sign-card__emoji">${sign}</span>
+                    <span class="sign-card__letter">${char.toUpperCase()}</span>
+                `;
+                output.appendChild(card);
+            }
+        }
+
+        function startCamera() {
+            alert('Kamera-Funktion wird in der nächsten Version verfügbar sein. Schau bald wieder vorbei! 📹');
+        }
+
+        // Initial translation
+        translateToSign();
+    </script>
+    <script src="../scripts/main.js"></script>
+</body>
+
+</html>
